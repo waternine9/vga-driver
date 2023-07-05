@@ -169,20 +169,21 @@ void VGA_Init()
     WriteCRT(VGA_CRT_OVERFLOW, 0x3E);
     WriteCRT(VGA_CRT_MODE, 0b11000011);
 
-    WriteGraphics(VGA_GRAPHICS_MISC, 0x1);
+    WriteGraphics(VGA_GRAPHICS_MISC, 0x5);
     WriteGraphics(VGA_GRAPHICS_MODE, 0b00000000);
     WriteGraphics(VGA_GRAPHICS_BIT_MASK, 0b11111111);
     WriteGraphics(VGA_GRAPHICS_DATA_ROTATE, 0);
 
-    WriteSequencer(VGA_SEQUENCER_MEMORY_MODE, 0b00000000); // Set the EM
+    WriteSequencer(VGA_SEQUENCER_MEMORY_MODE, 0b00000010); // Set the EM
     WriteSequencer(VGA_SEQUENCER_MAP_MASK, 0b00001111);
+    WriteSequencer(VGA_SEQUENCER_CHARACTER_MAP_SELECT, 0b0);
     WriteSequencer(VGA_SEQUENCER_CLOCKING_MODE, 0b00000001);
 
-    WriteAttribute(VGA_ATTRIBUTE_MODE_CONTROL, 0b00000001); // Set graphics mode in the attribute controller
-    WriteAttribute(VGA_ATTRIBUTE_COLOR_PLANE_ENABLE, 0b00001111); // Set graphics mode in the attribute controller
-    WriteAttribute(VGA_ATTRIBUTE_COLOR_SELECT, 0b00000000); // Set graphics mode in the attribute controller
-    WriteAttribute(VGA_ATTRIBUTE_OVERSCAN_COLOR, 0b00000000); // Set graphics mode in the attribute controller
-    WriteAttribute(VGA_ATTRIBUTE_HORIZONTAL_PEL_PANNING, 0b00000000); // Set graphics mode in the attribute controller
+    WriteAttribute(VGA_ATTRIBUTE_MODE_CONTROL, 0b00000001);
+    WriteAttribute(VGA_ATTRIBUTE_COLOR_PLANE_ENABLE, 0b00001111);
+    WriteAttribute(VGA_ATTRIBUTE_COLOR_SELECT, 0b00000000);
+    WriteAttribute(VGA_ATTRIBUTE_OVERSCAN_COLOR, 0b00000000);
+    WriteAttribute(VGA_ATTRIBUTE_HORIZONTAL_PEL_PANNING, 0b00000000);
 }
 
 void VGA_TurnScreenOff()
