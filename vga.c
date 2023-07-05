@@ -196,25 +196,70 @@ void VGA_TurnScreenOn()
     WriteSequencer(VGA_SEQUENCER_CLOCKING_MODE, (ReadSequencer(VGA_SEQUENCER_CLOCKING_MODE) & 0b00011111) | 0b00000010);
 }
 
-uint8_t CacheMask = 0;
+uint8_t CacheMask = 1;
 
-void VGA_WritePixel(uint32_t X, uint32_t Y, uint8_t RedMask, uint8_t GreenMask, uint8_t BlueMask, uint8_t Value)
+void VGA_SetColor(uint8_t Red, uint8_t Green, uint8_t Blue, uint8_t Alpha)
+{
+    CacheMask = Alpha ? 0b1000 : 0;
+    CacheMask |= Red ? 0b100 : 0;
+    CacheMask |= Green ? 0b10 : 0;
+    CacheMask |= Blue ? 0b1 : 0;
+}
+
+void VGA_WritePixel(uint32_t X, uint32_t Y, uint8_t Value)
 {
     if (X >= 640) return;
     if (Y >= 480) return;
 
-    uint8_t Mask = 1;
+    WriteSequencer(VGA_SEQUENCER_MAP_MASK, 0b00001111);
+    ((uint8_t*)0xA0000)[X / 8 + Y * 80] = 0;
+    WriteSequencer(VGA_SEQUENCER_MAP_MASK, CacheMask);
+    ((uint8_t*)0xA0000)[X / 8 + Y * 80] = Value ? 0xFF : 0x00;
+}
 
-    if (RedMask) Mask |= 0b100;
-    if (GreenMask) Mask |= 0b10;
-    if (BlueMask) Mask |= 0b1000;
+void VGA_Clear()
+{
+    WriteSequencer(VGA_SEQUENCER_MAP_MASK, 0b00001111);
 
-    if (CacheMask != Mask)
+    for (int i = 0;i < (640 / 8) * 480;i++)
     {
-        WriteSequencer(VGA_SEQUENCER_MAP_MASK, Mask);
-        CacheMask = Mask;
+        ((uint8_t*)0xA0000)[i] = 0x0;
     }
 
-    ((uint8_t*)0xA0000)[X / 8 + Y * 80] &= ~(1 << (7 - (X % 8)));
-    ((uint8_t*)0xA0000)[X / 8 + Y * 80] |= Value << (7 - (X % 8));
+    WriteSequencer(VGA_SEQUENCER_MAP_MASK, CacheMask);
+
+    for (int i = 0;i < (640 / 8) * 480;i++)
+    {
+        ((uint8_t*)0xA0000)[i] = 0xFF;
+    }
+}
+
+void _WritePixelFast(uint32_t X, uint32_t Y, uint8_t Value)
+{
+    if (X >= 640) return;
+    if (Y >= 480) return;
+
+    ((uint8_t*)0xA0000)[X / 8 + Y * 80] = Value ? 0xFF : 0x00;
+}
+
+void VGA_WriteRect(uint32_t x, uint32_t y, uint32_t w, uint32_t h)
+{
+    WriteSequencer(VGA_SEQUENCER_MAP_MASK, 0b00001111);
+    for (int _x = x;_x < x + w;_x++)
+    {
+        for (int _y = y;_y < y + h;_y++)
+        {
+            _WritePixelFast(_x, _y, 0);
+        }
+    }
+
+    WriteSequencer(VGA_SEQUENCER_MAP_MASK, CacheMask);
+
+    for (int _x = x;_x < x + w;_x++)
+    {
+        for (int _y = y;_y < y + h;_y++)
+        {
+            _WritePixelFast(_x, _y, 1);
+        }   
+    }
 }
