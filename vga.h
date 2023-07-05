@@ -1,5 +1,5 @@
-#ifndef H_TOS_VGA
-#define H_TOS_VGA
+#ifndef H_VGA_DRIVER
+#define H_VGA_DRIVER
 
 #include <stdint.h>
 
@@ -12,7 +12,16 @@ void VGA_TurnScreenOff();
 // Turn on screen
 void VGA_TurnScreenOn();
 
-// Write a pixel to the display
-void VGA_WritePixel(uint32_t X, uint32_t Y, uint8_t RedMask, uint8_t GreenMask, uint8_t BlueMask, uint8_t Value);
+// Set current draw color
+void VGA_SetColor(uint8_t Red, uint8_t Green, uint8_t Blue, uint8_t Alpha);
 
-#endif // H_TOS_VGA
+// Write a pixel to the display
+void VGA_WritePixel(uint32_t X, uint32_t Y, uint8_t Value);
+
+// Write a rectangle to the display
+void VGA_WriteRect(uint32_t x, uint32_t y, uint32_t w, uint32_t h);
+
+// Clear the display
+void VGA_Clear();
+
+#endif // H_VGA_DRIVER
