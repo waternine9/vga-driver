@@ -16,7 +16,7 @@ void VGA_TurnScreenOn();
 void VGA_SetColor(uint8_t Red, uint8_t Green, uint8_t Blue, uint8_t Alpha);
 
 // Write a pixel to the display
-void VGA_WritePixel(uint32_t X, uint32_t Y, uint8_t Value);
+void VGA_WritePixel(uint32_t X, uint32_t Y);
 
 // Write a rectangle to the display
 void VGA_WriteRect(uint32_t x, uint32_t y, uint32_t w, uint32_t h);
