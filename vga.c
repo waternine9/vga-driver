@@ -1,4 +1,4 @@
-#include "../../io.h"
+#include "io.h"
 #include "vga.h"
 
 #define VGA_MISCELLANEOUS_REG_READ 0x03CC
